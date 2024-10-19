@@ -1,48 +1,59 @@
-ethereum_package = import_module("github.com/ethpandaops/ethereum-package/main.star")
+optimism_package = import_module("github.com/tiljrd/optimism-package/main.star")
 contract_deployer = import_module("./src/contracts/contract_deployer.star")
 
 def run(plan):
-    ethereum_args = {"network_params": {"preset": "minimal"}, "additional_services": ["blockscout"]}
+    # Add Ethereum and Optimism network
+    optimism_args = {
+        "optimism_package": {
+            "chains": [
+                {
+                    "participants": [
+                        {
+                            "el_type": "op-geth",
+                            "el_image": "",
+                            "cl_type": "op-node",
+                            "cl_image": "",
+                            "count": 1
+                        }
+                    ],
+                    "network_params": {
+                        "network": "kurtosis",
+                        "network_id": "2151908",
+                        "seconds_per_slot": 2,
+                        "name": "op-kurtosis"
 
-    # Run Ethereum package
-    l1 = ethereum_package.run(plan, ethereum_args)
-    all_l1_participants = l1.all_participants
+                    }
+                }
+            ],
+            "op_contract_deployer_params": {
+                "image": "mslipper/op-deployer:latest",
+                "artifacts_url": "https://storage.googleapis.com/oplabs-contract-artifacts/artifacts-v1-4accd01f0c35c26f24d2aa71aba898dd7e5085a2ce5daadc8a84b10caf113409.tar.gz"
+            }
+        }
+    }
+    package_output = optimism_package.run(plan, optimism_args)
 
-    # Key and address for deployment
-    l1_private_key = l1.pre_funded_accounts[
+    plan.print(package_output)
+
+    bridge_address = package_output.bridge_address
+    network_id = package_output.l1_network_params.network_id
+
+    # L1 Key and address
+    private_key = package_output.pre_funded_accounts[
         12
-    ].private_key  # reserved for L2 contract deployers
-    l1_address = l1.pre_funded_accounts[
+    ].private_key
+    address = package_output.pre_funded_accounts[
         12
     ].address
-    rpc_url = all_l1_participants[0].el_context.rpc_http_url
+    l1_rpc_url = package_output.all_l1_participants[0].el_context.rpc_http_url
 
-    plan.print(all_l1_participants)
-    plan.print(l1_private_key)
-    plan.print(l1_address)
-    plan.print(rpc_url)
+    contract_deployer.bridge_tokens(plan, private_key, l1_rpc_url, bridge_address, network_id)
 
-    #Wait for syncing to be done
-    plan.wait(
-        service_name = all_l1_participants[0].el_context.el_metrics_info[0]["name"],
-        recipe = PostHttpRequestRecipe(
-            port_id="rpc",
-            endpoint="",
-            body='{"jsonrpc": "2.0", "method": "eth_syncing", "params": [], "id": 1}',
-            headers={
-                "Content-Type": "application/json"
-            },
-            extract = {
-                "status": ".result"
-            }
-        ),
-        field = "extract.status",
-        assertion = "==",
-        target_value = False,
-        interval = "1s",
-        timeout = "5m",
-        description = "Waiting for node to sync"
-    )
+    l2_rpc_url = package_output.all_l2_participants[0].el_context.rpc_http_url
 
-    # Deploy LayerZero contracts
-    contract_deployer.deploy_contracts(plan, rpc_url, l1_private_key, 1, l1_address)
+    # Deploy LayerZero contracts on L1
+    contract_deployer.deploy_contracts(plan, l1_rpc_url, private_key, 1, address)
+
+    # Deploy LayerZero contracts on L2
+    #TODO: Wait for address to receive balance
+    contract_deployer.deploy_contracts(plan, l2_rpc_url, private_key, 2, address)
