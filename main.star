@@ -40,20 +40,43 @@ def run(plan):
 
     # L1 Key and address
     private_key = package_output.pre_funded_accounts[
-        12
+        1
     ].private_key
     address = package_output.pre_funded_accounts[
-        12
+        1
     ].address
     l1_rpc_url = package_output.all_l1_participants[0].el_context.rpc_http_url
-
-    contract_deployer.bridge_tokens(plan, private_key, l1_rpc_url, bridge_address, network_id)
 
     l2_rpc_url = package_output.all_l2_participants[0].el_context.rpc_http_url
 
     # Deploy LayerZero contracts on L1
     contract_deployer.deploy_contracts(plan, l1_rpc_url, private_key, 1, address)
 
+    # Bridge tokens to L2
+    contract_deployer.bridge_tokens(plan, private_key, l1_rpc_url, bridge_address, network_id)
+
+    # Wait for balance to arrive at L2
+    token_wait_recipe = PostHttpRequestRecipe(
+        port_id = "rpc",
+        endpoint = "/",
+        content_type = "application/json",
+        body = '{"method":"eth_getBalance","params":["' + address + '", "latest"],"id":1,"jsonrpc":"2.0"}',
+        extract={
+            "balance": ".result"
+        }
+    )
+
+    # Wait and check if balance is larger than 0
+    plan.wait(
+        service_name=package_output.all_l2_participants[0].el_context.service_name,
+        recipe=token_wait_recipe,
+        field="extract.balance",
+        assertion="!=",
+        target_value="0x0",
+        interval="1s",
+        timeout="5m",
+        description="Waiting for tokens to reach L2"
+    )
+
     # Deploy LayerZero contracts on L2
-    #TODO: Wait for address to receive balance
     contract_deployer.deploy_contracts(plan, l2_rpc_url, private_key, 2, address)
