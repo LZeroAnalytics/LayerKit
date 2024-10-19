@@ -15,10 +15,12 @@ def run(plan):
     l1_address = l1.pre_funded_accounts[
         12
     ].address
+    rpc_url = all_l1_participants[0].el_context.rpc_http_url
 
     plan.print(all_l1_participants)
     plan.print(l1_private_key)
     plan.print(l1_address)
+    plan.print(rpc_url)
 
     #Wait for syncing to be done
     plan.wait(
@@ -43,4 +45,4 @@ def run(plan):
     )
 
     # Deploy LayerZero contracts
-    contract_deployer.deploy_contracts(plan, l1_private_key, l1_address)
+    contract_deployer.deploy_contracts(plan, rpc_url, l1_private_key, 1, l1_address)
