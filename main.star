@@ -1,4 +1,6 @@
 ethereum_package = import_module("github.com/ethpandaops/ethereum-package/main.star")
+contract_deployer = import_module("./src/contracts/contract_deployer.star")
+
 def run(plan):
     ethereum_args = {"network_params": {"preset": "minimal"}, "additional_services": ["blockscout"]}
 
@@ -39,3 +41,6 @@ def run(plan):
         timeout = "5m",
         description = "Waiting for node to sync"
     )
+
+    # Deploy LayerZero contracts
+    contract_deployer.deploy_contracts(plan, l1_private_key, l1_address)
