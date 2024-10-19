@@ -1,6 +1,6 @@
 ethereum_package = import_module("github.com/ethpandaops/ethereum-package/main.star")
 def run(plan):
-    ethereum_args = {"network_params": {"preset": "minimal"}}
+    ethereum_args = {"network_params": {"preset": "minimal"}, "additional_services": ["blockscout"]}
 
     # Run Ethereum package
     l1 = ethereum_package.run(plan, ethereum_args)
@@ -18,7 +18,7 @@ def run(plan):
     plan.print(l1_private_key)
     plan.print(l1_address)
 
-    # Wait for syncing to be done
+    #Wait for syncing to be done
     plan.wait(
         service_name = all_l1_participants[0].el_context.el_metrics_info[0]["name"],
         recipe = PostHttpRequestRecipe(
