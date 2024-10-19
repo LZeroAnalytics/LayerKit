@@ -1,0 +1,56 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+// Import the base MessageLib and other dependencies
+import "./SendLibBase.sol";
+
+contract MessageLibTemplate is SendLibBase {
+    // Define the constructor where users can input their configurations
+    constructor(
+        address _endpoint,            // The LayerZero Endpoint address (set per network)
+        uint32 _localEid,             // The local Endpoint ID (unique per chain)
+        uint256 _treasuryGasLimit,    // Gas limit for treasury operations
+        uint256 _treasuryNativeFeeCap // Max fee that can be charged in native token
+    ) SendLibBase(_endpoint, _localEid, _treasuryGasLimit, _treasuryNativeFeeCap) {}
+
+    // Optional: Additional configurations users might want to add
+
+    // Custom implementation for verifying messages (users can customize this)
+    function _quoteVerifier(
+        address _oapp,
+        uint32 _eid,
+        WorkerOptions[] memory _options
+    ) internal view override returns (uint256 nativeFee) {
+        // Example logic: Charge a flat fee per message
+        uint256 flatFee = 0.01 ether;
+        return flatFee;
+    }
+
+    // Custom implementation for splitting options (can be user-defined)
+    function _splitOptions(
+        bytes calldata _options
+    ) internal view override returns (bytes memory executorOptions, WorkerOptions[] memory validationOptions) {
+        // Example logic: No extra options, just return what is provided
+        executorOptions = _options;
+        validationOptions = new WorkerOptions ;  // No additional validation workers
+        return (executorOptions, validationOptions);
+    }
+
+    // Optional: Users can define how fees are paid to treasury or executor
+    function setTreasury(address _treasury) external onlyOwner {
+        _setTreasury(_treasury);
+    }
+
+    function setExecutorConfig(uint32 _remoteEid, address _executor, uint32 _maxMessageSize) external onlyOwner {
+        ExecutorConfig memory config = ExecutorConfig({
+            maxMessageSize: _maxMessageSize,
+            executor: _executor
+        });
+        _setExecutorConfig(_remoteEid, msg.sender, config);
+    }
+
+    // Optional: Allow users to update the fee cap
+    function updateTreasuryFeeCap(uint256 newCap) external onlyOwner {
+        setTreasuryNativeFeeCap(newCap);
+    }
+}

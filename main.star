@@ -1,5 +1,5 @@
 optimism_package = import_module("github.com/tiljrd/optimism-package/main.star")
-contract_deployer = import_module("./src/contracts/contract_deployer.star")
+contract_deployer = import_module("./src/endpoint/contract_deployer.star")
 
 def run(plan):
     # Add Ethereum and Optimism network
@@ -22,13 +22,21 @@ def run(plan):
                         "seconds_per_slot": 2,
                         "name": "op-kurtosis"
 
-                    }
+                    },
+                    "additional_services": [
+                        "blockscout"
+                    ]
                 }
             ],
             "op_contract_deployer_params": {
                 "image": "mslipper/op-deployer:latest",
                 "artifacts_url": "https://storage.googleapis.com/oplabs-contract-artifacts/artifacts-v1-4accd01f0c35c26f24d2aa71aba898dd7e5085a2ce5daadc8a84b10caf113409.tar.gz"
             }
+        },
+        "ethereum_package": {
+            "additional_services": [
+                "blockscout"
+            ]
         }
     }
     package_output = optimism_package.run(plan, optimism_args)
