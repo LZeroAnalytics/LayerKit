@@ -1,5 +1,6 @@
 optimism_package = import_module("github.com/tiljrd/optimism-package/main.star")
-contract_deployer = import_module("./src/endpoint/contract_deployer.star")
+endpoint_deployer = import_module("./src/endpoint/contract_deployer.star")
+message_lib_deployer = import_module("./src/MessageLib/contract_deployer.star")
 
 def run(plan):
     # Add Ethereum and Optimism network
@@ -24,7 +25,6 @@ def run(plan):
 
                     },
                     "additional_services": [
-                        "blockscout"
                     ]
                 }
             ],
@@ -35,7 +35,6 @@ def run(plan):
         },
         "ethereum_package": {
             "additional_services": [
-                "blockscout"
             ]
         }
     }
@@ -58,10 +57,10 @@ def run(plan):
     l2_rpc_url = package_output.all_l2_participants[0].el_context.rpc_http_url
 
     # Deploy LayerZero contracts on L1
-    contract_deployer.deploy_contracts(plan, l1_rpc_url, private_key, 1, address)
+    endpoint_deployer.deploy_contracts(plan, l1_rpc_url, private_key, 1, address)
 
     # Bridge tokens to L2
-    contract_deployer.bridge_tokens(plan, private_key, l1_rpc_url, bridge_address, network_id)
+    endpoint_deployer.bridge_tokens(plan, private_key, l1_rpc_url, bridge_address, network_id)
 
     # Wait for balance to arrive at L2
     token_wait_recipe = PostHttpRequestRecipe(
@@ -87,4 +86,8 @@ def run(plan):
     )
 
     # Deploy LayerZero contracts on L2
-    contract_deployer.deploy_contracts(plan, l2_rpc_url, private_key, 2, address)
+    endpoint_deployer.deploy_contracts(plan, l2_rpc_url, private_key, 2, address)
+
+    # Deploy ULN302 Send and Receive
+    message_lib_deployer.deploy_contracts(plan, l1_rpc_url, private_key, 1, address)
+    message_lib_deployer.deploy_contracts(plan, l2_rpc_url, private_key, 2, address)
