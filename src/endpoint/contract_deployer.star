@@ -38,3 +38,7 @@ def bridge_tokens(plan, private_key, rpc_url, bridge_address, chain_id):
         }
     )
 
+
+def register_library(plan, rpc_url, private_key, library_address):
+    plan.print("Registering library")
+

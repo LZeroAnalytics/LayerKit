@@ -2,6 +2,8 @@ optimism_package = import_module("github.com/tiljrd/optimism-package/main.star")
 endpoint_deployer = import_module("./src/endpoint/contract_deployer.star")
 message_lib_deployer = import_module("./src/MessageLib/contract_deployer.star")
 executor_deployer = import_module("./src/Executor/contract_deployer.star")
+price_feed_deployer = import_module("./src/PriceFeed/contract_deployer.star")
+dvn_deployer = import_module("./src/DVN/contract_deployer.star")
 
 def run(plan):
     # Add Ethereum and Optimism network
@@ -89,6 +91,7 @@ def run(plan):
     endpoint_deployer.deploy_contract(plan, l2_rpc_url, private_key, 2, address)
 
     # Deploy ULN302 Send and Receive
+    # TODO: Retrieve contract addresses from deployment (tr -d '\n'")
     message_lib_deployer.deploy_uln_send(plan, l1_rpc_url, private_key, 1, address) #0xDeC3326BE4BaDb9A1fA7Be473Ef8370dA775889a
     message_lib_deployer.deploy_uln_receive(plan, l1_rpc_url, private_key, 1, address) # 0x70e9F1967498e8d863B371d0d6B22DA6B53E8D05
     message_lib_deployer.deploy_uln_send(plan, l2_rpc_url, private_key, 2, address) # 0x6f00cAa972723C5e1D1012cdAc385753c2AA3a93
@@ -98,5 +101,31 @@ def run(plan):
     executor_deployer.deploy_contract(plan, l1_rpc_url, private_key) # 0xCC97bb833F9D361Fd8F65e02Ba4b8413E1E0AE0D
     executor_deployer.deploy_contract(plan, l2_rpc_url, private_key) # 0x70e9F1967498e8d863B371d0d6B22DA6B53E8D05
 
+    # Deploy Price Feed Mocks
+    price_feed_deployer.deploy_contract(plan, l1_rpc_url, private_key, address) # 0x015B8C864D1B6e9BACd0DD666D77590cFd4188Cb
+    price_feed_deployer.deploy_contract(plan, l2_rpc_url, private_key, address) # 0xCC97bb833F9D361Fd8F65e02Ba4b8413E1E0AE0D
 
+    # Deploy DVN contracts
+    dvn_deployer.deploy_contract(
+        plan,
+        l1_rpc_url,
+        private_key,
+        1,
+        ['0xDeC3326BE4BaDb9A1fA7Be473Ef8370dA775889a', '0x70e9F1967498e8d863B371d0d6B22DA6B53E8D05'],
+        '0x015B8C864D1B6e9BACd0DD666D77590cFd4188Cb',
+        [address],
+        1,
+        [address]
+    )
 
+    dvn_deployer.deploy_contract(
+        plan,
+        l2_rpc_url,
+        private_key,
+        2,
+        ['0x6f00cAa972723C5e1D1012cdAc385753c2AA3a93', '0xDeC3326BE4BaDb9A1fA7Be473Ef8370dA775889a'],
+        '0xCC97bb833F9D361Fd8F65e02Ba4b8413E1E0AE0D',
+        [address],
+        1,
+        [address]
+    )
