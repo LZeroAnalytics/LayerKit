@@ -59,7 +59,7 @@ def run(plan):
 
     l2_rpc_url = package_output.all_l2_participants[0].el_context.rpc_http_url
 
-    endpoint_deployer.deploy_contract(plan, l1_rpc_url, private_key, 1, address)
+    endpoint_deployer.deploy_contract(plan, l1_rpc_url, private_key, 1, address) # 0x6db20C530b3F96CD5ef64Da2b1b931Cb8f264009
 
     # Bridge tokens to L2
     endpoint_deployer.bridge_tokens(plan, private_key, l1_rpc_url, bridge_address, network_id)
@@ -88,7 +88,7 @@ def run(plan):
     )
 
     # Deploy endpoint on L2
-    endpoint_deployer.deploy_contract(plan, l2_rpc_url, private_key, 2, address)
+    endpoint_deployer.deploy_contract(plan, l2_rpc_url, private_key, 2, address) # 0x6db20C530b3F96CD5ef64Da2b1b931Cb8f264009
 
     # Deploy ULN302 Send and Receive
     # TODO: Retrieve contract addresses from deployment (tr -d '\n'")
@@ -116,7 +116,7 @@ def run(plan):
         [address],
         1,
         [address]
-    )
+    ) # 0xBFfF570853d97636b78ebf262af953308924D3D8
 
     dvn_deployer.deploy_contract(
         plan,
@@ -128,4 +128,89 @@ def run(plan):
         [address],
         1,
         [address]
+    ) # 0x015B8C864D1B6e9BACd0DD666D77590cFd4188Cb
+
+    # Register libraries with endpoints
+    endpoint_deployer.register_library(
+        plan,
+        l1_rpc_url,
+        private_key,
+        address,
+        "0x6db20C530b3F96CD5ef64Da2b1b931Cb8f264009",
+        "0xDeC3326BE4BaDb9A1fA7Be473Ef8370dA775889a",
+        1
+    )
+    endpoint_deployer.register_library(
+        plan,
+        l1_rpc_url,
+        private_key,
+        address,
+        "0x6db20C530b3F96CD5ef64Da2b1b931Cb8f264009",
+        "0x70e9F1967498e8d863B371d0d6B22DA6B53E8D05",
+        1
+    )
+
+    endpoint_deployer.register_library(
+        plan,
+        l2_rpc_url,
+        private_key,
+        address,
+        "0x6db20C530b3F96CD5ef64Da2b1b931Cb8f264009",
+        "0x6f00cAa972723C5e1D1012cdAc385753c2AA3a93",
+        2
+    )
+    endpoint_deployer.register_library(
+        plan,
+        l2_rpc_url,
+        private_key,
+        address,
+        "0x6db20C530b3F96CD5ef64Da2b1b931Cb8f264009",
+        "0xDeC3326BE4BaDb9A1fA7Be473Ef8370dA775889a",
+        2
+    )
+
+    # Set default send library
+    endpoint_deployer.set_send_default(
+        plan,
+        l1_rpc_url,
+        private_key,
+        address,
+        2,
+        "0x6db20C530b3F96CD5ef64Da2b1b931Cb8f264009",
+        "0xDeC3326BE4BaDb9A1fA7Be473Ef8370dA775889a",
+        1
+    )
+
+    endpoint_deployer.set_send_default(
+        plan,
+        l2_rpc_url,
+        private_key,
+        address,
+        1,
+        "0x6db20C530b3F96CD5ef64Da2b1b931Cb8f264009",
+        "0x6f00cAa972723C5e1D1012cdAc385753c2AA3a93",
+        2
+    )
+
+    # Set default receive library
+    endpoint_deployer.set_receive_default(
+        plan,
+        l1_rpc_url,
+        private_key,
+        address,
+        2,
+        "0x6db20C530b3F96CD5ef64Da2b1b931Cb8f264009",
+        "0x70e9F1967498e8d863B371d0d6B22DA6B53E8D05",
+        1
+    )
+
+    endpoint_deployer.set_receive_default(
+        plan,
+        l2_rpc_url,
+        private_key,
+        address,
+        1,
+        "0x6db20C530b3F96CD5ef64Da2b1b931Cb8f264009",
+        "0xDeC3326BE4BaDb9A1fA7Be473Ef8370dA775889a",
+        2
     )

@@ -10,6 +10,9 @@ def deploy_uln_send(plan, rpc_url, owner_private_key, endpoint_id, owner_address
             1000000000000,
             100000
         ),
+        store = [
+            StoreSpec(src = "/workspace/packages/layerzero-v2/evm/messagelib/out/SendUln302.sol/SendUln302.json", name = "uln-" + str(endpoint_id)),
+        ],
     )
 
 def deploy_uln_receive(plan, rpc_url, owner_private_key, endpoint_id, owner_address):
