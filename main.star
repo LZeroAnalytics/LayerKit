@@ -56,8 +56,7 @@ def run(plan):
 
     l2_rpc_url = package_output.all_l2_participants[0].el_context.rpc_http_url
 
-    # Deploy LayerZero contracts on L1
-    endpoint_deployer.deploy_contracts(plan, l1_rpc_url, private_key, 1, address)
+    endpoint_deployer.deploy_contract(plan, l1_rpc_url, private_key, 1, address)
 
     # Bridge tokens to L2
     endpoint_deployer.bridge_tokens(plan, private_key, l1_rpc_url, bridge_address, network_id)
@@ -85,9 +84,16 @@ def run(plan):
         description="Waiting for tokens to reach L2"
     )
 
-    # Deploy LayerZero contracts on L2
-    endpoint_deployer.deploy_contracts(plan, l2_rpc_url, private_key, 2, address)
+    # Deploy endpoint on L2
+    endpoint_deployer.deploy_contract(plan, l2_rpc_url, private_key, 2, address)
 
     # Deploy ULN302 Send and Receive
-    message_lib_deployer.deploy_contracts(plan, l1_rpc_url, private_key, 1, address)
-    message_lib_deployer.deploy_contracts(plan, l2_rpc_url, private_key, 2, address)
+    message_lib_deployer.deploy_uln_send(plan, l1_rpc_url, private_key, 1, address) #0xDeC3326BE4BaDb9A1fA7Be473Ef8370dA775889a
+    message_lib_deployer.deploy_uln_receive(plan, l1_rpc_url, private_key, 1, address) # 0x70e9F1967498e8d863B371d0d6B22DA6B53E8D05
+    message_lib_deployer.deploy_uln_send(plan, l2_rpc_url, private_key, 2, address) # 0x6f00cAa972723C5e1D1012cdAc385753c2AA3a93
+    message_lib_deployer.deploy_uln_receive(plan, l2_rpc_url, private_key, 2, address) # 0xDeC3326BE4BaDb9A1fA7Be473Ef8370dA775889a
+
+
+
+
+

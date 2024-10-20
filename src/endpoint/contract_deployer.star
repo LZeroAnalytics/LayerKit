@@ -1,4 +1,4 @@
-def deploy_contracts(plan, rpc_url, owner_private_key, endpoint_id, owner_address):
+def deploy_contract(plan, rpc_url, owner_private_key, endpoint_id, owner_address):
     plan.run_sh(
         name="contract-deployer",
         description="Deploying EndpointV2",

@@ -1,4 +1,4 @@
-def deploy_contracts(plan, rpc_url, owner_private_key, endpoint_id, owner_address):
+def deploy_uln_send(plan, rpc_url, owner_private_key, endpoint_id, owner_address):
     uln_send = plan.run_sh(
         name="contract-deployer",
         description="Deploying ULN302 Send",
@@ -12,6 +12,7 @@ def deploy_contracts(plan, rpc_url, owner_private_key, endpoint_id, owner_addres
         ),
     )
 
+def deploy_uln_receive(plan, rpc_url, owner_private_key, endpoint_id, owner_address):
     uln_receive = plan.run_sh(
         name="contract-deployer",
         description="Deploying ULN302 Receive",
@@ -22,4 +23,3 @@ def deploy_contracts(plan, rpc_url, owner_private_key, endpoint_id, owner_addres
             "0x6db20C530b3F96CD5ef64Da2b1b931Cb8f264009"
         ),
     )
-
