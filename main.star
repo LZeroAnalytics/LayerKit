@@ -28,6 +28,7 @@ def run(plan):
 
                     },
                     "additional_services": [
+                        "blockscout"
                     ]
                 }
             ],
@@ -38,6 +39,7 @@ def run(plan):
         },
         "ethereum_package": {
             "additional_services": [
+                "blockscout"
             ]
         }
     }

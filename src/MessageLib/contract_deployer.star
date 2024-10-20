@@ -2,7 +2,7 @@ def deploy_uln_send(plan, rpc_url, owner_private_key, endpoint_id, owner_address
     uln_send = plan.run_sh(
         name="contract-deployer",
         description="Deploying ULN302 Send",
-        image="tiljordan/layerzero-deployer:v1.0.5",
+        image="tiljordan/layerzero-deployer:v1.0.6",
         run="forge create ../messagelib/contracts/uln/uln302/SendUln302.sol:SendUln302 --json --rpc-url {} --private-key {} --constructor-args {} {} {}".format(
             rpc_url,
             owner_private_key,
@@ -19,7 +19,7 @@ def deploy_uln_receive(plan, rpc_url, owner_private_key, endpoint_id, owner_addr
     uln_receive = plan.run_sh(
         name="contract-deployer",
         description="Deploying ULN302 Receive",
-        image="tiljordan/layerzero-deployer:v1.0.5",
+        image="tiljordan/layerzero-deployer:v1.0.6",
         run="forge create ../messagelib/contracts/uln/uln302/ReceiveUln302.sol:ReceiveUln302 --json --rpc-url {} --private-key {} --constructor-args {}".format(
             rpc_url,
             owner_private_key,

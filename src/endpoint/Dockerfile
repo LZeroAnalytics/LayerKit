@@ -30,4 +30,9 @@ RUN yarn install
 # Build all the contracts
 RUN yarn build
 
+WORKDIR /workspace/packages/layerzero-v2/evm/messagelib
+RUN forge build
+
+WORKDIR /workspace/packages/layerzero-v2/evm/protocol
+
 ENTRYPOINT ["/bin/bash"]

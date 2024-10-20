@@ -2,7 +2,7 @@ def deploy_contract(plan, rpc_url, owner_private_key, endpoint_id, owner_address
     plan.run_sh(
         name="contract-deployer",
         description="Deploying EndpointV2",
-        image="tiljordan/layerzero-deployer:v1.0.5",
+        image="tiljordan/layerzero-deployer:v1.0.6",
         run="forge create contracts/EndpointV2.sol:EndpointV2 --json --rpc-url {} --private-key {} --constructor-args {} {}".format(
             rpc_url,
             owner_private_key,
