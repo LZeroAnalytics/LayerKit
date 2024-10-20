@@ -1,6 +1,7 @@
 optimism_package = import_module("github.com/tiljrd/optimism-package/main.star")
 endpoint_deployer = import_module("./src/endpoint/contract_deployer.star")
 message_lib_deployer = import_module("./src/MessageLib/contract_deployer.star")
+executor_deployer = import_module("./src/Executor/contract_deployer.star")
 
 def run(plan):
     # Add Ethereum and Optimism network
@@ -93,7 +94,9 @@ def run(plan):
     message_lib_deployer.deploy_uln_send(plan, l2_rpc_url, private_key, 2, address) # 0x6f00cAa972723C5e1D1012cdAc385753c2AA3a93
     message_lib_deployer.deploy_uln_receive(plan, l2_rpc_url, private_key, 2, address) # 0xDeC3326BE4BaDb9A1fA7Be473Ef8370dA775889a
 
-
+    # Deploy Executors
+    executor_deployer.deploy_contract(plan, l1_rpc_url, private_key) # 0xCC97bb833F9D361Fd8F65e02Ba4b8413E1E0AE0D
+    executor_deployer.deploy_contract(plan, l2_rpc_url, private_key) # 0x70e9F1967498e8d863B371d0d6B22DA6B53E8D05
 
 
 
